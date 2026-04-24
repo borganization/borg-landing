@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Borg - Personal AI assistant that evolves</title>
+<meta name="description" content="Borg is a personal AI assistant. Runs on your machine. Remembers you. Gets better over time. Like Pokemon, evolves through sustained use into a specialized companion.">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/app.js" defer></script>
+</head>
+<body>
+<header id="topbar">
+  <div id="title"><a href="#top">Borg</a></div>
+  <nav id="breadcrumbs">
+    <a href="#top">~</a>
+    <span class="sep">/</span> <a href="#what">What Is Borg</a>
+    <span class="sep">/</span> <a href="#evolves">Borg Evolves</a>
+    <span class="sep">/</span> <a href="#providers">Providers</a>
+    <span class="sep">/</span> <a href="#install">Install</a>
+  </nav>
+  <div id="actions">
+    <a href="https://docs.borganization.ai/" target="_blank" rel="noopener">Docs</a>
+    <a href="https://github.com/borganization/borg" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</header>
+<hr>
+
+<div id="layout">
+
+  <aside id="tree-pane">
+    <div class="pane-header">Index</div>
+    <ul id="tree">
+      <li class="dir open"><span class="label"><span class="chevron"></span><a href="#top" class="current">Home</a></span>
+        <ul>
+          <li class="file"><a href="#what">What Is Borg</a></li>
+          <li class="file"><a href="#evolves">Borg Evolves</a></li>
+          <li class="file"><a href="#providers">Providers</a></li>
+          <li class="file"><a href="#install">Install</a></li>
+        </ul>
+      </li>
+      <li class="dir"><span class="label"><span class="chevron"></span><a href="https://docs.borganization.ai/" target="_blank" rel="noopener">Docs</a></span></li>
+      <li class="dir"><span class="label"><span class="chevron"></span><a href="https://github.com/borganization/borg" target="_blank" rel="noopener">GitHub</a></span></li>
+    </ul>
+    <div class="sidebar-aside">
+      <div class="sb-box">
+        <div class="sb-box-title">status</div>
+        <div class="sb-box-body">
+          <div>version <b>0.9.3</b></div>
+          <div>license <b>MIT</b></div>
+          <div>builds <span class="green">passing</span></div>
+          <div>updated <b>23 Apr 2026</b></div>
+        </div>
+      </div>
+      <div class="sb-box">
+        <div class="sb-box-title">visitors</div>
+        <div class="counter" id="visitor-counter">00014311</div>
+      </div>
+      <div class="sb-box">
+        <div class="sb-box-title">web ring</div>
+        <div class="sb-box-body ring">
+          <a href="#">&laquo; prev</a> &middot;
+          <a href="#">random</a> &middot;
+          <a href="#">next &raquo;</a>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main id="doc-pane">
+    <article id="doc">
+
+    <a id="top"></a>
+    <h1>Borg</h1>
+    <p class="lede">
+      Personal AI assistant. Runs on your machine. Remembers you. Gets better over time.
+      Ships as one binary with every integration compiled in. Your data lives in <code>~/.borg/</code>.
+    </p>
+    <p>
+      Borg is different from your chatbot. It is an <i>agent</i> that earns XP, forms a bond with you,
+      and evolves from a generic assistant into a named, specialized companion tuned to your real
+      workflows. Think of it as a pet terminal.
+    </p>
+
+    <blockquote class="pull">
+      <div class="pull-kicker">one-line install</div>
+      <pre class="install"><code>curl -fsSL https://raw.githubusercontent.com/borganization/borg/main/scripts/install.sh | bash
+borg</code></pre>
+      <div class="pull-foot">macOS &amp; Linux. The installer walks you through provider setup.</div>
+    </blockquote>
+
+    <a id="what"></a>
+    <h2>What is Borg</h2>
+    <table class="feature-table">
+      <tr>
+        <th>Runs on your machine</th>
+        <td>One binary. SQLite on disk. Every integration compiled in. No SaaS. Your data stays in one folder.</td>
+      </tr>
+      <tr>
+        <th>Remembers you</th>
+        <td>Long-term memory with hybrid vector + BM25 retrieval. Survives restarts. Per-project scoping.</td>
+      </tr>
+      <tr>
+        <th>Writes its own tools</th>
+        <td>The agent drafts plugins and skills for you at runtime. You install them from one catalog.</td>
+      </tr>
+      <tr>
+        <th>Meets you where you are</th>
+        <td>Native channels for Telegram, Slack, Discord, Teams, Google Chat, Signal, Twilio, iMessage.</td>
+      </tr>
+      <tr>
+        <th>Swaps providers at runtime</th>
+        <td>OpenAI, Anthropic, OpenRouter, Gemini, DeepSeek, Groq, Ollama (local), Claude Code CLI.</td>
+      </tr>
+      <tr>
+        <th>Gets better over time</th>
+        <td>Borganism: vitals, bond, evolution. Three stages. Ten archetypes. XP for aligned work.</td>
+      </tr>
+    </table>
+
+    <a id="evolves"></a>
+    <h2>Borg evolves <span class="h2-sub">&mdash; Your base Borg evolves to a specialized Borg</span></h2>
+    <p>
+      Use Borg. It earns XP, forms a bond, and <b>evolves</b> &mdash; the LLM names it
+      after your dominant archetype. Flip through the cabinet for each form's
+      <code>/card</code>.
+    </p>
+
+    <div id="archetype-carousel-mount"></div>
+
+    <a id="providers"></a>
+    <h2>Providers, channels, commands</h2>
+    <div class="three-col">
+      <div class="col">
+        <h4>Providers</h4>
+        <ul class="plain">
+          <li>OpenAI</li>
+          <li>Anthropic</li>
+          <li>OpenRouter</li>
+          <li>Gemini</li>
+          <li>DeepSeek</li>
+          <li>Groq</li>
+          <li>Ollama <span class="tag">local</span></li>
+          <li>Claude Code CLI</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4>Channels</h4>
+        <ul class="plain">
+          <li>Telegram</li>
+          <li>Slack</li>
+          <li>Discord</li>
+          <li>Microsoft Teams</li>
+          <li>Google Chat</li>
+          <li>Signal</li>
+          <li>Twilio (WhatsApp, SMS)</li>
+          <li>iMessage <span class="tag">macOS</span></li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4>Slash commands</h4>
+        <ul class="plain">
+          <li><code>/status</code></li>
+          <li><code>/evolution</code></li>
+          <li><code>/xp</code></li>
+          <li><code>/card</code></li>
+          <li><code>/mode</code></li>
+          <li><code>/settings</code></li>
+          <li><code>/poke</code></li>
+          <li><code>/help</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <a id="install"></a>
+    <h2>Install Borg</h2>
+    <blockquote class="pull cta">
+      <div class="pull-kicker">one line. mac &amp; linux.</div>
+      <pre class="install"><code>curl -fsSL https://raw.githubusercontent.com/borganization/borg/main/scripts/install.sh | bash
+borg</code></pre>
+      <div class="cta-actions">
+        <a class="cta-btn primary" href="https://raw.githubusercontent.com/borganization/borg/main/scripts/install.sh" target="_blank" rel="noopener">&raquo; copy install script</a>
+      </div>
+      <div class="pull-foot">Pick a provider, paste a key, start earning XP.</div>
+    </blockquote>
+
+    <footer id="docfoot">
+      <hr>
+      <small>
+        Borg is an open-source AI personal assistant.
+        Source: <a href="https://github.com/borganization/borg">github.com/borganization/borg</a>.
+        Docs: <a href="https://docs.borganization.ai/">docs.borganization.ai</a>.
+        <br>
+        Last updated 23 April 2026 &middot; <a href="#top">back to top</a>
+      </small>
+    </footer>
+
+    </article>
+  </main>
+</div>
+
+</body>
+</html>
