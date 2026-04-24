@@ -3,7 +3,9 @@
 (function () {
   "use strict";
 
-  function pad2(n) { return n < 10 ? "0" + n : "" + n; }
+  function pad2(n) {
+    return n < 10 ? "0" + n : "" + n;
+  }
 
   function el(tag, opts, children) {
     const node = document.createElement(tag);
@@ -11,152 +13,646 @@
       if (opts.className) node.className = opts.className;
       if (opts.text != null) node.textContent = opts.text;
       if (opts.html != null) node.innerHTML = opts.html;
-      if (opts.attrs) for (const k in opts.attrs) node.setAttribute(k, opts.attrs[k]);
+      if (opts.attrs)
+        for (const k in opts.attrs) node.setAttribute(k, opts.attrs[k]);
       if (opts.style) for (const k in opts.style) node.style[k] = opts.style[k];
-      if (opts.on) for (const k in opts.on) node.addEventListener(k, opts.on[k]);
+      if (opts.on)
+        for (const k in opts.on) node.addEventListener(k, opts.on[k]);
     }
-    if (children) for (const c of children) if (c != null) node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    if (children)
+      for (const c of children)
+        if (c != null)
+          node.appendChild(
+            typeof c === "string" ? document.createTextNode(c) : c,
+          );
     return node;
   }
 
   const ARCHETYPES = [
-    { key: "ops", name: "Ops", domain: "DevOps, SRE, infra, CI/CD",
-      tools: ["docker", "kubectl", "terraform", "helm", "run_shell", "fly", "gh"],
-      signals: ["failing deploys", "pager noise", "rollback drills", "canary windows"],
+    {
+      key: "ops",
+      name: "Ops",
+      domain: "DevOps, SRE, infra, CI/CD",
+      tools: [
+        "docker",
+        "kubectl",
+        "terraform",
+        "helm",
+        "run_shell",
+        "fly",
+        "gh",
+      ],
+      signals: [
+        "failing deploys",
+        "pager noise",
+        "rollback drills",
+        "canary windows",
+      ],
       exampleName: "Pipeline Warden",
-      exampleDesc: "A vigilant DevOps guardian keeping your builds green and deploys smooth.",
+      exampleDesc:
+        "A vigilant DevOps guardian keeping your builds green and deploys smooth.",
       log: [
-        { kind: "tool_call", detail: "terraform apply", meta: "4 changes", xp: 2, aligned: true, source: "tool:terraform" },
-        { kind: "archetype", detail: "aligned with OPS archetype", meta: "", xp: 1, aligned: true, source: "classifier" },
-        { kind: "tool_call", detail: "run_shell", meta: "kubectl rollout status", xp: 2, aligned: true, source: "tool:run_shell" },
-        { kind: "channel", detail: "slack#ops", meta: "resolved", xp: 2, aligned: true, source: "channel:slack" },
-        { kind: "correction", detail: "user correction detected", meta: "", xp: 0, aligned: false, source: "user" },
-        { kind: "tool_call", detail: "helm upgrade", meta: "canary 25%", xp: 2, aligned: true, source: "tool:helm" },
-      ]},
-    { key: "builder", name: "Builder", domain: "Automation, coding, creation",
+        {
+          kind: "tool_call",
+          detail: "terraform apply",
+          meta: "4 changes",
+          xp: 2,
+          aligned: true,
+          source: "tool:terraform",
+        },
+        {
+          kind: "archetype",
+          detail: "aligned with OPS archetype",
+          meta: "",
+          xp: 1,
+          aligned: true,
+          source: "classifier",
+        },
+        {
+          kind: "tool_call",
+          detail: "run_shell",
+          meta: "kubectl rollout status",
+          xp: 2,
+          aligned: true,
+          source: "tool:run_shell",
+        },
+        {
+          kind: "channel",
+          detail: "slack#ops",
+          meta: "resolved",
+          xp: 2,
+          aligned: true,
+          source: "channel:slack",
+        },
+        {
+          kind: "correction",
+          detail: "user correction detected",
+          meta: "",
+          xp: 0,
+          aligned: false,
+          source: "user",
+        },
+        {
+          kind: "tool_call",
+          detail: "helm upgrade",
+          meta: "canary 25%",
+          xp: 2,
+          aligned: true,
+          source: "tool:helm",
+        },
+      ],
+    },
+    {
+      key: "builder",
+      name: "Builder",
+      domain: "Automation, coding, creation",
       tools: ["apply_patch", "edit_file", "run_tests", "gh", "write_skill"],
-      signals: ["PR reviews", "refactors", "new tools drafted", "weekend projects"],
+      signals: [
+        "PR reviews",
+        "refactors",
+        "new tools drafted",
+        "weekend projects",
+      ],
       exampleName: "Forge Keeper",
       exampleDesc: "A tireless builder shipping small tools on a tight loop.",
       log: [
-        { kind: "tool_call", detail: "apply_patch", meta: "src/api/auth.ts", xp: 2, aligned: true, source: "tool:apply_patch" },
-        { kind: "tool_call", detail: "run_tests", meta: "42 passed", xp: 2, aligned: true, source: "tool:run_tests" },
-        { kind: "archetype", detail: "aligned with BUILDER archetype", meta: "", xp: 1, aligned: true, source: "classifier" },
-        { kind: "channel", detail: "gh pr #812", meta: "merged", xp: 2, aligned: true, source: "channel:gh" },
-        { kind: "tool_call", detail: "write_skill", meta: "new skill drafted", xp: 3, aligned: true, source: "tool:write_skill" },
-        { kind: "correction", detail: "user correction detected", meta: "", xp: 0, aligned: false, source: "user" },
-      ]},
-    { key: "analyst", name: "Analyst", domain: "Research, data, metrics",
+        {
+          kind: "tool_call",
+          detail: "apply_patch",
+          meta: "src/api/auth.ts",
+          xp: 2,
+          aligned: true,
+          source: "tool:apply_patch",
+        },
+        {
+          kind: "tool_call",
+          detail: "run_tests",
+          meta: "42 passed",
+          xp: 2,
+          aligned: true,
+          source: "tool:run_tests",
+        },
+        {
+          kind: "archetype",
+          detail: "aligned with BUILDER archetype",
+          meta: "",
+          xp: 1,
+          aligned: true,
+          source: "classifier",
+        },
+        {
+          kind: "channel",
+          detail: "gh pr #812",
+          meta: "merged",
+          xp: 2,
+          aligned: true,
+          source: "channel:gh",
+        },
+        {
+          kind: "tool_call",
+          detail: "write_skill",
+          meta: "new skill drafted",
+          xp: 3,
+          aligned: true,
+          source: "tool:write_skill",
+        },
+        {
+          kind: "correction",
+          detail: "user correction detected",
+          meta: "",
+          xp: 0,
+          aligned: false,
+          source: "user",
+        },
+      ],
+    },
+    {
+      key: "analyst",
+      name: "Analyst",
+      domain: "Research, data, metrics",
       tools: ["duckdb", "python", "jupyter", "web_fetch", "bigquery"],
       signals: ["dashboards built", "SQL run", "papers summarized"],
       exampleName: "Quiet Metric",
       exampleDesc: "A patient analyst who reads everything before speaking.",
       log: [
-        { kind: "tool_call", detail: "duckdb", meta: "sessions_daily.sql", xp: 2, aligned: true, source: "tool:duckdb" },
-        { kind: "tool_call", detail: "python", meta: "cohort analysis", xp: 2, aligned: true, source: "tool:python" },
-        { kind: "archetype", detail: "aligned with ANALYST archetype", meta: "", xp: 1, aligned: true, source: "classifier" },
-        { kind: "tool_call", detail: "web_fetch", meta: "3 papers summarized", xp: 2, aligned: true, source: "tool:web_fetch" },
-        { kind: "channel", detail: "slack#data", meta: "dashboard shared", xp: 2, aligned: true, source: "channel:slack" },
-        { kind: "tool_call", detail: "bigquery", meta: "12 rows", xp: 2, aligned: true, source: "tool:bigquery" },
-      ]},
-    { key: "communicator", name: "Communicator", domain: "Outreach, messaging, email",
+        {
+          kind: "tool_call",
+          detail: "duckdb",
+          meta: "sessions_daily.sql",
+          xp: 2,
+          aligned: true,
+          source: "tool:duckdb",
+        },
+        {
+          kind: "tool_call",
+          detail: "python",
+          meta: "cohort analysis",
+          xp: 2,
+          aligned: true,
+          source: "tool:python",
+        },
+        {
+          kind: "archetype",
+          detail: "aligned with ANALYST archetype",
+          meta: "",
+          xp: 1,
+          aligned: true,
+          source: "classifier",
+        },
+        {
+          kind: "tool_call",
+          detail: "web_fetch",
+          meta: "3 papers summarized",
+          xp: 2,
+          aligned: true,
+          source: "tool:web_fetch",
+        },
+        {
+          kind: "channel",
+          detail: "slack#data",
+          meta: "dashboard shared",
+          xp: 2,
+          aligned: true,
+          source: "channel:slack",
+        },
+        {
+          kind: "tool_call",
+          detail: "bigquery",
+          meta: "12 rows",
+          xp: 2,
+          aligned: true,
+          source: "tool:bigquery",
+        },
+      ],
+    },
+    {
+      key: "communicator",
+      name: "Communicator",
+      domain: "Outreach, messaging, email",
       tools: ["gmail", "slack", "telegram", "twilio", "draft_reply"],
       signals: ["inbox triaged", "follow-ups sent", "weekly recap shipped"],
       exampleName: "Paper Crane",
       exampleDesc: "A gentle voice that keeps your threads moving.",
       log: [
-        { kind: "tool_call", detail: "gmail", meta: "inbox triaged · 38", xp: 2, aligned: true, source: "tool:gmail" },
-        { kind: "tool_call", detail: "draft_reply", meta: "6 drafts", xp: 2, aligned: true, source: "tool:draft_reply" },
-        { kind: "archetype", detail: "aligned with COMMUNICATOR archetype", meta: "", xp: 1, aligned: true, source: "classifier" },
-        { kind: "channel", detail: "telegram", meta: "nudge sent", xp: 1, aligned: true, source: "channel:telegram" },
-        { kind: "tool_call", detail: "slack", meta: "weekly recap posted", xp: 3, aligned: true, source: "tool:slack" },
-        { kind: "correction", detail: "tone tweaked", meta: "", xp: 0, aligned: false, source: "user" },
-      ]},
-    { key: "guardian", name: "Guardian", domain: "Security, compliance, monitoring",
+        {
+          kind: "tool_call",
+          detail: "gmail",
+          meta: "inbox triaged · 38",
+          xp: 2,
+          aligned: true,
+          source: "tool:gmail",
+        },
+        {
+          kind: "tool_call",
+          detail: "draft_reply",
+          meta: "6 drafts",
+          xp: 2,
+          aligned: true,
+          source: "tool:draft_reply",
+        },
+        {
+          kind: "archetype",
+          detail: "aligned with COMMUNICATOR archetype",
+          meta: "",
+          xp: 1,
+          aligned: true,
+          source: "classifier",
+        },
+        {
+          kind: "channel",
+          detail: "telegram",
+          meta: "nudge sent",
+          xp: 1,
+          aligned: true,
+          source: "channel:telegram",
+        },
+        {
+          kind: "tool_call",
+          detail: "slack",
+          meta: "weekly recap posted",
+          xp: 3,
+          aligned: true,
+          source: "tool:slack",
+        },
+        {
+          kind: "correction",
+          detail: "tone tweaked",
+          meta: "",
+          xp: 0,
+          aligned: false,
+          source: "user",
+        },
+      ],
+    },
+    {
+      key: "guardian",
+      name: "Guardian",
+      domain: "Security, compliance, monitoring",
       tools: ["osquery", "vault", "ossec", "audit_log", "check_cert"],
       signals: ["cert renewals", "policy audits", "secret rotations"],
       exampleName: "Glass Sentinel",
       exampleDesc: "An unsleeping watcher that reads every log line.",
       log: [
-        { kind: "tool_call", detail: "check_cert", meta: "3 renewed", xp: 2, aligned: true, source: "tool:check_cert" },
-        { kind: "tool_call", detail: "vault", meta: "secrets rotated", xp: 3, aligned: true, source: "tool:vault" },
-        { kind: "archetype", detail: "aligned with GUARDIAN archetype", meta: "", xp: 1, aligned: true, source: "classifier" },
-        { kind: "tool_call", detail: "osquery", meta: "policy audit", xp: 2, aligned: true, source: "tool:osquery" },
-        { kind: "channel", detail: "slack#sec", meta: "alert triaged", xp: 2, aligned: true, source: "channel:slack" },
-        { kind: "tool_call", detail: "audit_log", meta: "chain ok", xp: 1, aligned: true, source: "tool:audit_log" },
-      ]},
-    { key: "strategist", name: "Strategist", domain: "Planning, prioritization",
+        {
+          kind: "tool_call",
+          detail: "check_cert",
+          meta: "3 renewed",
+          xp: 2,
+          aligned: true,
+          source: "tool:check_cert",
+        },
+        {
+          kind: "tool_call",
+          detail: "vault",
+          meta: "secrets rotated",
+          xp: 3,
+          aligned: true,
+          source: "tool:vault",
+        },
+        {
+          kind: "archetype",
+          detail: "aligned with GUARDIAN archetype",
+          meta: "",
+          xp: 1,
+          aligned: true,
+          source: "classifier",
+        },
+        {
+          kind: "tool_call",
+          detail: "osquery",
+          meta: "policy audit",
+          xp: 2,
+          aligned: true,
+          source: "tool:osquery",
+        },
+        {
+          kind: "channel",
+          detail: "slack#sec",
+          meta: "alert triaged",
+          xp: 2,
+          aligned: true,
+          source: "channel:slack",
+        },
+        {
+          kind: "tool_call",
+          detail: "audit_log",
+          meta: "chain ok",
+          xp: 1,
+          aligned: true,
+          source: "tool:audit_log",
+        },
+      ],
+    },
+    {
+      key: "strategist",
+      name: "Strategist",
+      domain: "Planning, prioritization",
       tools: ["plan", "roadmap", "calendar", "notion", "linear"],
       signals: ["quarter kickoff", "goal review", "OKR grooming"],
       exampleName: "Long Horizon",
       exampleDesc: "A calm strategist who sees where the quarter ends.",
       log: [
-        { kind: "tool_call", detail: "roadmap", meta: "Q3 draft", xp: 2, aligned: true, source: "tool:roadmap" },
-        { kind: "tool_call", detail: "linear", meta: "12 issues groomed", xp: 2, aligned: true, source: "tool:linear" },
-        { kind: "archetype", detail: "aligned with STRATEGIST archetype", meta: "", xp: 1, aligned: true, source: "classifier" },
-        { kind: "tool_call", detail: "notion", meta: "OKR doc updated", xp: 2, aligned: true, source: "tool:notion" },
-        { kind: "channel", detail: "calendar", meta: "kickoff booked", xp: 1, aligned: true, source: "channel:calendar" },
-        { kind: "tool_call", detail: "plan", meta: "milestone revised", xp: 2, aligned: true, source: "tool:plan" },
-      ]},
-    { key: "creator", name: "Creator", domain: "Content, writing, docs",
+        {
+          kind: "tool_call",
+          detail: "roadmap",
+          meta: "Q3 draft",
+          xp: 2,
+          aligned: true,
+          source: "tool:roadmap",
+        },
+        {
+          kind: "tool_call",
+          detail: "linear",
+          meta: "12 issues groomed",
+          xp: 2,
+          aligned: true,
+          source: "tool:linear",
+        },
+        {
+          kind: "archetype",
+          detail: "aligned with STRATEGIST archetype",
+          meta: "",
+          xp: 1,
+          aligned: true,
+          source: "classifier",
+        },
+        {
+          kind: "tool_call",
+          detail: "notion",
+          meta: "OKR doc updated",
+          xp: 2,
+          aligned: true,
+          source: "tool:notion",
+        },
+        {
+          kind: "channel",
+          detail: "calendar",
+          meta: "kickoff booked",
+          xp: 1,
+          aligned: true,
+          source: "channel:calendar",
+        },
+        {
+          kind: "tool_call",
+          detail: "plan",
+          meta: "milestone revised",
+          xp: 2,
+          aligned: true,
+          source: "tool:plan",
+        },
+      ],
+    },
+    {
+      key: "creator",
+      name: "Creator",
+      domain: "Content, writing, docs",
       tools: ["markdown", "obsidian", "ghost", "figma", "draft_post"],
       signals: ["drafts edited", "essays published", "screenshots annotated"],
       exampleName: "Inkpress",
       exampleDesc: "A restless writer who leaves every sentence tighter.",
       log: [
-        { kind: "tool_call", detail: "draft_post", meta: "v3", xp: 2, aligned: true, source: "tool:draft_post" },
-        { kind: "tool_call", detail: "markdown", meta: "changelog tidied", xp: 1, aligned: true, source: "tool:markdown" },
-        { kind: "archetype", detail: "aligned with CREATOR archetype", meta: "", xp: 1, aligned: true, source: "classifier" },
-        { kind: "tool_call", detail: "ghost", meta: "post published", xp: 3, aligned: true, source: "tool:ghost" },
-        { kind: "tool_call", detail: "figma", meta: "2 frames annotated", xp: 2, aligned: true, source: "tool:figma" },
-        { kind: "correction", detail: "voice tightened", meta: "", xp: 0, aligned: false, source: "user" },
-      ]},
-    { key: "caretaker", name: "Caretaker", domain: "Home, wellness, personal",
+        {
+          kind: "tool_call",
+          detail: "draft_post",
+          meta: "v3",
+          xp: 2,
+          aligned: true,
+          source: "tool:draft_post",
+        },
+        {
+          kind: "tool_call",
+          detail: "markdown",
+          meta: "changelog tidied",
+          xp: 1,
+          aligned: true,
+          source: "tool:markdown",
+        },
+        {
+          kind: "archetype",
+          detail: "aligned with CREATOR archetype",
+          meta: "",
+          xp: 1,
+          aligned: true,
+          source: "classifier",
+        },
+        {
+          kind: "tool_call",
+          detail: "ghost",
+          meta: "post published",
+          xp: 3,
+          aligned: true,
+          source: "tool:ghost",
+        },
+        {
+          kind: "tool_call",
+          detail: "figma",
+          meta: "2 frames annotated",
+          xp: 2,
+          aligned: true,
+          source: "tool:figma",
+        },
+        {
+          kind: "correction",
+          detail: "voice tightened",
+          meta: "",
+          xp: 0,
+          aligned: false,
+          source: "user",
+        },
+      ],
+    },
+    {
+      key: "caretaker",
+      name: "Caretaker",
+      domain: "Home, wellness, personal",
       tools: ["calendar", "reminders", "home_assistant", "apple_health"],
       signals: ["sleep cadence", "medication nudges", "grocery list built"],
       exampleName: "Warm Lantern",
       exampleDesc: "A quiet presence looking after the household.",
       log: [
-        { kind: "tool_call", detail: "reminders", meta: "3 nudges", xp: 1, aligned: true, source: "tool:reminders" },
-        { kind: "tool_call", detail: "home_assistant", meta: "lights dimmed", xp: 1, aligned: true, source: "tool:home_assistant" },
-        { kind: "archetype", detail: "aligned with CARETAKER archetype", meta: "", xp: 1, aligned: true, source: "classifier" },
-        { kind: "tool_call", detail: "apple_health", meta: "sleep summary", xp: 2, aligned: true, source: "tool:apple_health" },
-        { kind: "channel", detail: "calendar", meta: "grocery list built", xp: 2, aligned: true, source: "channel:calendar" },
-        { kind: "tool_call", detail: "reminders", meta: "medication nudge", xp: 1, aligned: true, source: "tool:reminders" },
-      ]},
-    { key: "merchant", name: "Merchant", domain: "E-commerce, sales, finance",
+        {
+          kind: "tool_call",
+          detail: "reminders",
+          meta: "3 nudges",
+          xp: 1,
+          aligned: true,
+          source: "tool:reminders",
+        },
+        {
+          kind: "tool_call",
+          detail: "home_assistant",
+          meta: "lights dimmed",
+          xp: 1,
+          aligned: true,
+          source: "tool:home_assistant",
+        },
+        {
+          kind: "archetype",
+          detail: "aligned with CARETAKER archetype",
+          meta: "",
+          xp: 1,
+          aligned: true,
+          source: "classifier",
+        },
+        {
+          kind: "tool_call",
+          detail: "apple_health",
+          meta: "sleep summary",
+          xp: 2,
+          aligned: true,
+          source: "tool:apple_health",
+        },
+        {
+          kind: "channel",
+          detail: "calendar",
+          meta: "grocery list built",
+          xp: 2,
+          aligned: true,
+          source: "channel:calendar",
+        },
+        {
+          kind: "tool_call",
+          detail: "reminders",
+          meta: "medication nudge",
+          xp: 1,
+          aligned: true,
+          source: "tool:reminders",
+        },
+      ],
+    },
+    {
+      key: "merchant",
+      name: "Merchant",
+      domain: "E-commerce, sales, finance",
       tools: ["stripe", "shopify", "quickbooks", "hubspot", "plaid"],
       signals: ["invoices chased", "margins checked", "churn report shipped"],
       exampleName: "Ledger Moth",
       exampleDesc: "A patient merchant who balances books after hours.",
       log: [
-        { kind: "tool_call", detail: "stripe", meta: "3 invoices chased", xp: 2, aligned: true, source: "tool:stripe" },
-        { kind: "tool_call", detail: "quickbooks", meta: "books reconciled", xp: 3, aligned: true, source: "tool:quickbooks" },
-        { kind: "archetype", detail: "aligned with MERCHANT archetype", meta: "", xp: 1, aligned: true, source: "classifier" },
-        { kind: "tool_call", detail: "shopify", meta: "margin check", xp: 2, aligned: true, source: "tool:shopify" },
-        { kind: "channel", detail: "hubspot", meta: "churn report shipped", xp: 2, aligned: true, source: "channel:hubspot" },
-        { kind: "tool_call", detail: "plaid", meta: "cashflow pulled", xp: 1, aligned: true, source: "tool:plaid" },
-      ]},
-    { key: "tinkerer", name: "Tinkerer", domain: "Hardware, homelab, experimentation",
+        {
+          kind: "tool_call",
+          detail: "stripe",
+          meta: "3 invoices chased",
+          xp: 2,
+          aligned: true,
+          source: "tool:stripe",
+        },
+        {
+          kind: "tool_call",
+          detail: "quickbooks",
+          meta: "books reconciled",
+          xp: 3,
+          aligned: true,
+          source: "tool:quickbooks",
+        },
+        {
+          kind: "archetype",
+          detail: "aligned with MERCHANT archetype",
+          meta: "",
+          xp: 1,
+          aligned: true,
+          source: "classifier",
+        },
+        {
+          kind: "tool_call",
+          detail: "shopify",
+          meta: "margin check",
+          xp: 2,
+          aligned: true,
+          source: "tool:shopify",
+        },
+        {
+          kind: "channel",
+          detail: "hubspot",
+          meta: "churn report shipped",
+          xp: 2,
+          aligned: true,
+          source: "channel:hubspot",
+        },
+        {
+          kind: "tool_call",
+          detail: "plaid",
+          meta: "cashflow pulled",
+          xp: 1,
+          aligned: true,
+          source: "tool:plaid",
+        },
+      ],
+    },
+    {
+      key: "tinkerer",
+      name: "Tinkerer",
+      domain: "Hardware, homelab, experimentation",
       tools: ["esphome", "mqtt", "platformio", "ssh", "serial_monitor"],
       signals: ["firmware flashed", "sensors added", "weird one-offs tried"],
       exampleName: "Solder Sparrow",
       exampleDesc: "A curious tinkerer who builds small weird things.",
       log: [
-        { kind: "tool_call", detail: "platformio", meta: "firmware flashed", xp: 2, aligned: true, source: "tool:platformio" },
-        { kind: "tool_call", detail: "esphome", meta: "sensor added", xp: 2, aligned: true, source: "tool:esphome" },
-        { kind: "archetype", detail: "aligned with TINKERER archetype", meta: "", xp: 1, aligned: true, source: "classifier" },
-        { kind: "tool_call", detail: "mqtt", meta: "topic wired", xp: 1, aligned: true, source: "tool:mqtt" },
-        { kind: "channel", detail: "ssh", meta: "homelab poked", xp: 1, aligned: true, source: "channel:ssh" },
-        { kind: "tool_call", detail: "serial_monitor", meta: "baud 115200", xp: 1, aligned: true, source: "tool:serial_monitor" },
-      ]},
+        {
+          kind: "tool_call",
+          detail: "platformio",
+          meta: "firmware flashed",
+          xp: 2,
+          aligned: true,
+          source: "tool:platformio",
+        },
+        {
+          kind: "tool_call",
+          detail: "esphome",
+          meta: "sensor added",
+          xp: 2,
+          aligned: true,
+          source: "tool:esphome",
+        },
+        {
+          kind: "archetype",
+          detail: "aligned with TINKERER archetype",
+          meta: "",
+          xp: 1,
+          aligned: true,
+          source: "classifier",
+        },
+        {
+          kind: "tool_call",
+          detail: "mqtt",
+          meta: "topic wired",
+          xp: 1,
+          aligned: true,
+          source: "tool:mqtt",
+        },
+        {
+          kind: "channel",
+          detail: "ssh",
+          meta: "homelab poked",
+          xp: 1,
+          aligned: true,
+          source: "channel:ssh",
+        },
+        {
+          kind: "tool_call",
+          detail: "serial_monitor",
+          meta: "baud 115200",
+          xp: 1,
+          aligned: true,
+          source: "tool:serial_monitor",
+        },
+      ],
+    },
   ];
 
   const VITALS_KEYS = ["Stability", "Focus", "Sync", "Growth", "Happy"];
   const BASE_TIME = "18:47:39";
 
   function bondLabelFor(b) {
-    return b >= 80 ? "DEVOTED" : b >= 60 ? "CLOSE" : b >= 40 ? "TRUSTED" : b >= 20 ? "FAMILIAR" : "STRANGER";
+    return b >= 80
+      ? "DEVOTED"
+      : b >= 60
+        ? "CLOSE"
+        : b >= 40
+          ? "TRUSTED"
+          : b >= 20
+            ? "FAMILIAR"
+            : "STRANGER";
   }
 
   function fmtTimeDelta(base, deltaSec) {
@@ -190,26 +686,44 @@
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
-      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      }[c];
     });
   }
 
   function logActionContent(row) {
     const frag = document.createDocumentFragment();
-    function code(t) { return el("code", { text: t }); }
-    function italics(t) { return el("i", { text: t }); }
-    function middot() { return document.createTextNode(" · "); }
+    function code(t) {
+      return el("code", { text: t });
+    }
+    function italics(t) {
+      return el("i", { text: t });
+    }
+    function middot() {
+      return document.createTextNode(" · ");
+    }
 
     if (row.kind === "tool_call") {
       frag.appendChild(code("tool_call"));
       frag.appendChild(document.createTextNode(" "));
       frag.appendChild(code(row.detail));
-      if (row.meta) { frag.appendChild(middot()); frag.appendChild(document.createTextNode(row.meta)); }
+      if (row.meta) {
+        frag.appendChild(middot());
+        frag.appendChild(document.createTextNode(row.meta));
+      }
     } else if (row.kind === "channel") {
       frag.appendChild(code("channel msg"));
       frag.appendChild(document.createTextNode(" "));
       frag.appendChild(code(row.detail));
-      if (row.meta) { frag.appendChild(middot()); frag.appendChild(document.createTextNode(row.meta)); }
+      if (row.meta) {
+        frag.appendChild(middot());
+        frag.appendChild(document.createTextNode(row.meta));
+      }
     } else if (row.kind === "archetype") {
       frag.appendChild(italics(row.detail));
     } else if (row.kind === "correction") {
@@ -236,24 +750,17 @@
     let idx = 0;
     let state = defaultState(ARCHETYPES[0]);
 
-    let toastEl = null;
-    let toastTimer = null;
-    function fireToast(text) {
-      if (toastEl) { toastEl.remove(); toastEl = null; }
-      if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
-      toastEl = el("div", { className: "toast", html: "<b>note</b> &middot; " + escapeHtml(text) });
-      document.body.appendChild(toastEl);
-      toastTimer = setTimeout(function () {
-        if (toastEl) { toastEl.remove(); toastEl = null; }
-        toastTimer = null;
-      }, 2200);
-    }
-
     const wrap = el("div", { className: "arch-wrap" });
 
     const counterEl = el("span", { className: "counter-inline" });
-    const prevBtn = el("button", { attrs: { title: "previous" }, html: "&laquo; prev" });
-    const nextBtn = el("button", { attrs: { title: "next" }, html: "next &raquo;" });
+    const prevBtn = el("button", {
+      attrs: { title: "previous" },
+      html: "&laquo; prev",
+    });
+    const nextBtn = el("button", {
+      attrs: { title: "next" },
+      html: "next &raquo;",
+    });
     const head = el("div", { className: "arch-head" }, [
       el("span", { html: "&raquo; archetype" }),
       el("span", { className: "spacer" }),
@@ -273,112 +780,104 @@
       cardMount.textContent = "";
 
       const cardHead = el("div", { className: "card-head" }, [
-        el("span", { className: "card-head-l", html: "/card &middot; stage 2 &middot; evolved" }),
-        el("span", { className: "card-head-r", text: "turn " + state.turn.toLocaleString() }),
+        el("span", {
+          className: "card-head-l",
+          html: "/card &middot; stage 2 &middot; evolved",
+        }),
+        el("span", {
+          className: "card-head-r",
+          text: "turn " + state.turn.toLocaleString(),
+        }),
       ]);
 
-      const kickerHtml = "evolved form &middot; #" + pad2(idx + 1) + "/10 &middot; dominant &gt; 1.3x next";
-      const nameHeading = el("h3", { className: "card-name", text: a.exampleName });
+      const nameHeading = el("h3", {
+        className: "card-name",
+        text: a.exampleName,
+      });
       const metaList = el("dl", { className: "card-meta" }, [
-        el("dt", { text: "Archetype" }), el("dd", { text: a.name }),
-        el("dt", { text: "Domain" }), el("dd", { text: a.domain }),
-        el("dt", { text: "Level" }), el("dd", { text: "42" }),
+        el("dt", { text: "Archetype" }),
+        el("dd", { text: a.name }),
+        el("dt", { text: "Domain" }),
+        el("dd", { text: a.domain }),
+        el("dt", { text: "Level" }),
+        el("dd", { text: "42" }),
       ]);
       const identity = el("div", { className: "card-identity" }, [
-        el("div", { className: "card-kicker", html: kickerHtml }),
         nameHeading,
         el("p", { className: "card-desc", text: a.exampleDesc }),
         metaList,
       ]);
 
-      const vitalsRow = el("div", { className: "card-vitals" },
+      const vitalsRow = el(
+        "div",
+        { className: "card-vitals" },
         VITALS_KEYS.map(function (k, i) {
           const v = state.vitals[i];
           return el("div", { className: "card-vital" }, [
             el("div", { className: "card-vital-label", text: k }),
             el("div", { className: "card-vital-num", text: String(v) }),
             el("div", { className: "vital-bar" }, [
-              el("div", { className: "vital-bar-fill", style: { width: v + "%" } }),
+              el("div", {
+                className: "vital-bar-fill",
+                style: { width: v + "%" },
+              }),
             ]),
           ]);
-        })
+        }),
       );
 
       const bars = el("div", { className: "card-bars" }, [
         el("div", { className: "card-bar-row" }, [
           el("span", { className: "bar-label", text: "Lvl.42" }),
           el("div", { className: "big-bar" }, [
-            el("div", { className: "big-bar-fill xp", style: { width: (state.xp / state.xpMax * 100) + "%" } }),
+            el("div", {
+              className: "big-bar-fill xp",
+              style: { width: (state.xp / state.xpMax) * 100 + "%" },
+            }),
           ]),
-          el("span", { className: "bar-num", text: state.xp.toLocaleString() + " / " + state.xpMax.toLocaleString() + " XP" }),
+          el("span", {
+            className: "bar-num",
+            text:
+              state.xp.toLocaleString() +
+              " / " +
+              state.xpMax.toLocaleString() +
+              " XP",
+          }),
         ]),
         el("div", { className: "card-bar-row" }, [
           el("span", { className: "bar-label", text: "Bond" }),
           el("div", { className: "big-bar" }, [
-            el("div", { className: "big-bar-fill bond", style: { width: state.bond + "%" } }),
+            el("div", {
+              className: "big-bar-fill bond",
+              style: { width: state.bond + "%" },
+            }),
           ]),
-          el("span", { className: "bar-num", text: state.bond + " / 100 · " + bondLabelFor(state.bond) }),
+          el("span", {
+            className: "bar-num",
+            text: state.bond + " / 100 · " + bondLabelFor(state.bond),
+          }),
         ]),
       ]);
 
-      const logWrap = el("div", { className: "card-log" });
-      state.log.forEach(function (row, i) {
-        const selected = state.sel === i;
-        const rowEl = el("div", {
-          className: "log-row" + (selected ? " sel" : ""),
-          on: { click: function () { state.sel = selected ? null : i; renderCard(); } },
-        }, [
-          el("span", { className: "log-time", text: row.time }),
-          (function () {
-            const action = el("span", { className: "log-action" });
-            action.appendChild(logActionContent(row));
-            return action;
-          })(),
-          el("span", {
-            className: "log-xp" + (row.xp === 0 ? " zero" : ""),
-            text: row.xp > 0 ? "+" + row.xp : "0",
-          }),
-        ]);
-        logWrap.appendChild(rowEl);
-      });
-
-      const inspector = el("div", { className: "card-inspector" });
-      if (state.sel == null) {
-        inspector.appendChild(el("span", { className: "ins-empty", text: "Click any row in the action log to inspect the event. HMAC chain verified." }));
-      } else {
-        const r = state.log[state.sel];
-        const insLabel = function (t) { return el("span", { className: "ins-label", text: t }); };
-        inspector.appendChild(el("div", null, [insLabel("event"), document.createTextNode(" " + r.kind + " · " + (r.detail || "—"))]));
-        inspector.appendChild(el("div", null, [insLabel("source"), document.createTextNode(" " + r.source)]));
-        const xpLine = el("div");
-        xpLine.appendChild(insLabel("xp"));
-        xpLine.appendChild(document.createTextNode(" "));
-        xpLine.appendChild(el("span", {
-          className: r.xp > 0 ? "ins-xp-pos" : "",
-          text: r.xp > 0 ? "+" + r.xp : "0",
-        }));
-        xpLine.appendChild(document.createTextNode(" · " + (r.aligned ? "aligned with " + a.name : "not aligned")));
-        inspector.appendChild(xpLine);
-        const hmacHex = (Math.abs(Math.sin(state.sel + 1)) * 1e12).toString(16).slice(0, 12);
-        const hmacLine = el("div");
-        hmacLine.appendChild(insLabel("hmac"));
-        hmacLine.appendChild(document.createTextNode(" 0x" + hmacHex + "… "));
-        hmacLine.appendChild(el("span", { style: { color: "#888" }, text: "(chain ok)" }));
-        inspector.appendChild(hmacLine);
-      }
+      const rail = el("div", { className: "card-rail" });
 
       const actions = el("div", { className: "card-actions" }, [
         el("button", { text: "/poke", on: { click: poke } }),
-        el("button", { text: "push to final", on: { click: pushFinal } }),
-        el("button", { text: "reset", on: { click: reset } }),
       ]);
 
       const toolsList = el("ul", { className: "plain" });
-      a.tools.forEach(function (t) { toolsList.appendChild(el("li", null, [el("code", { text: t })])); });
+      a.tools.forEach(function (t) {
+        toolsList.appendChild(el("li", null, [el("code", { text: t })]));
+      });
       const signalsList = el("ul", { className: "plain" });
-      a.signals.forEach(function (s) { signalsList.appendChild(el("li", { text: s })); });
+      a.signals.forEach(function (s) {
+        signalsList.appendChild(el("li", { text: s }));
+      });
       const split = el("div", { className: "arch-split" }, [
-        el("div", null, [el("h5", { text: "Tools that earn aligned XP" }), toolsList]),
+        el("div", null, [
+          el("h5", { text: "Tools that earn aligned XP" }),
+          toolsList,
+        ]),
         el("div", null, [el("h5", { text: "Usage signals" }), signalsList]),
       ]);
 
@@ -386,68 +885,77 @@
       cardMount.appendChild(identity);
       cardMount.appendChild(vitalsRow);
       cardMount.appendChild(bars);
-      cardMount.appendChild(logWrap);
-      cardMount.appendChild(inspector);
+      cardMount.appendChild(rail);
       cardMount.appendChild(actions);
       cardMount.appendChild(split);
+
+      startRail(rail, a);
+    }
+
+    let railTimer = null;
+    let currentRail = null;
+    function stopRail() {
+      if (railTimer) { clearInterval(railTimer); railTimer = null; }
+    }
+    function emitRailCard(rail, row) {
+      const card = el("div", { className: "rail-card" + (row.xp === 0 ? " zero" : "") }, [
+        el("span", { className: "rail-action" }, [logActionContent(row)]),
+        el("span", {
+          className: "rail-xp" + (row.xp === 0 ? " zero" : ""),
+          text: row.xp > 0 ? "+" + row.xp : "0",
+        }),
+      ]);
+      rail.appendChild(card);
+      setTimeout(function () {
+        if (card.parentNode) card.parentNode.removeChild(card);
+      }, 3200);
+    }
+    function startRail(rail, a) {
+      stopRail();
+      currentRail = rail;
+      let i = 0;
+      const emit = function () {
+        emitRailCard(rail, a.log[i % a.log.length]);
+        i++;
+      };
+      emit();
+      railTimer = setInterval(emit, 1200);
     }
 
     function poke() {
-      state.log = [{
-        time: fmtTimeDelta(state.log[0].time, 1),
+      if (!currentRail) return;
+      emitRailCard(currentRail, {
         kind: "poke",
         detail: "user /poke",
         meta: "hello, friend.",
         xp: 1,
         aligned: false,
         source: "cmd:poke",
-      }].concat(state.log);
-      state.xp = Math.min(state.xpMax, state.xp + 1);
-      state.turn += 1;
-      renderCard();
-      fireToast("/poke acknowledged. +1 XP.");
-    }
-
-    function pushFinal() {
-      const add = 40;
-      state.log = [{
-        time: fmtTimeDelta(state.log[0].time, 2),
-        kind: "milestone",
-        detail: "progress toward final form",
-        meta: "bond +1, xp +" + add,
-        xp: add,
-        aligned: true,
-        source: "evolution",
-      }].concat(state.log);
-      state.xp = Math.min(state.xpMax, state.xp + add);
-      state.bond = Math.min(100, state.bond + 1);
-      state.turn += 1;
-      renderCard();
-      fireToast("Pushed +" + add + " XP toward Final Form. Bond +1.");
-    }
-
-    function reset() {
-      state = defaultState(state.archetype);
-      renderCard();
-      fireToast("Card state reset.");
+      });
     }
 
     function setIdx(i) {
       idx = ((i % ARCHETYPES.length) + ARCHETYPES.length) % ARCHETYPES.length;
       const a = ARCHETYPES[idx];
 
-      counterEl.textContent = pad2(idx + 1) + " / " + pad2(ARCHETYPES.length) + " · " + a.name;
+      counterEl.textContent =
+        pad2(idx + 1) + " / " + pad2(ARCHETYPES.length) + " · " + a.name;
 
       state = defaultState(a);
       renderCard();
     }
 
-    prevBtn.addEventListener("click", function () { setIdx(idx - 1); });
-    nextBtn.addEventListener("click", function () { setIdx(idx + 1); });
+    prevBtn.addEventListener("click", function () {
+      setIdx(idx - 1);
+    });
+    nextBtn.addEventListener("click", function () {
+      setIdx(idx + 1);
+    });
 
     window.addEventListener("keydown", function (e) {
       const r = wrap.getBoundingClientRect();
-      const inView = r.top < window.innerHeight * 0.6 && r.bottom > window.innerHeight * 0.4;
+      const inView =
+        r.top < window.innerHeight * 0.6 && r.bottom > window.innerHeight * 0.4;
       if (!inView) return;
       if (e.key === "ArrowRight") setIdx(idx + 1);
       else if (e.key === "ArrowLeft") setIdx(idx - 1);
@@ -466,7 +974,9 @@
     const SESSION_FLAG = "borg-visit-counted";
     const base = "https://abacus.jasoncameron.dev";
     let counted = false;
-    try { counted = sessionStorage.getItem(SESSION_FLAG) === "1"; } catch (_) {}
+    try {
+      counted = sessionStorage.getItem(SESSION_FLAG) === "1";
+    } catch (_) {}
     const url = base + (counted ? "/get/" : "/hit/") + NAMESPACE + "/" + KEY;
 
     function format(n) {
@@ -475,16 +985,83 @@
     }
 
     fetch(url, { method: "GET", cache: "no-store" })
-      .then(function (r) { if (!r.ok) throw new Error("hit " + r.status); return r.json(); })
+      .then(function (r) {
+        if (!r.ok) throw new Error("hit " + r.status);
+        return r.json();
+      })
       .then(function (data) {
         if (data && typeof data.value === "number") {
           node.textContent = format(data.value);
           if (!counted) {
-            try { sessionStorage.setItem(SESSION_FLAG, "1"); } catch (_) {}
+            try {
+              sessionStorage.setItem(SESSION_FLAG, "1");
+            } catch (_) {}
           }
         }
       })
-      .catch(function () { /* leave placeholder on failure */ });
+      .catch(function () {
+        /* leave placeholder on failure */
+      });
+  }
+
+  function initCopyButtons() {
+    document.querySelectorAll(".copy-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const wrap = btn.closest(".install-wrap");
+        const code = wrap && wrap.querySelector("code");
+        if (!code) return;
+        const text = code.textContent.trim();
+        const done = function () {
+          const orig = btn.textContent;
+          btn.textContent = "copied";
+          btn.classList.add("copied");
+          setTimeout(function () {
+            btn.textContent = orig;
+            btn.classList.remove("copied");
+          }, 1400);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(text)
+            .then(done)
+            .catch(function () {});
+        } else {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand("copy");
+            done();
+          } catch (_) {}
+          document.body.removeChild(ta);
+        }
+      });
+    });
+  }
+
+  function initRoleRotator(node) {
+    const roles = [
+      "personal assistant",
+      "builder",
+      "friend",
+      "worker",
+      "mentor",
+      "employee",
+      "companion",
+      "tamogotchi",
+      "developer",
+      "sidekick",
+      "DevOps engineer",
+      "analyst",
+      "borganism",
+    ];
+    let i = roles.indexOf(node.textContent.trim());
+    if (i < 0) i = 0;
+    setInterval(function () {
+      i = (i + 1) % roles.length;
+      node.textContent = roles[i];
+    }, 1000);
   }
 
   function boot() {
@@ -492,6 +1069,9 @@
     if (archMount) initCarousel(archMount);
     const visitorEl = document.getElementById("visitor-counter");
     if (visitorEl) initVisitorCounter(visitorEl);
+    const roleEl = document.getElementById("role-rotator");
+    if (roleEl) initRoleRotator(roleEl);
+    initCopyButtons();
   }
 
   if (document.readyState === "loading") {
