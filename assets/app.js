@@ -48,7 +48,7 @@
         "rollback drills",
         "canary windows",
       ],
-      exampleName: "Pipeline Warden",
+      exampleName: "Ops Borg",
       exampleDesc:
         "A vigilant DevOps guardian keeping your builds green and deploys smooth.",
       log: [
@@ -113,7 +113,7 @@
         "new tools drafted",
         "weekend projects",
       ],
-      exampleName: "Forge Keeper",
+      exampleName: "Builder Borg",
       exampleDesc: "A tireless builder shipping small tools on a tight loop.",
       log: [
         {
@@ -172,7 +172,7 @@
       domain: "Research, data, metrics",
       tools: ["duckdb", "python", "jupyter", "web_fetch", "bigquery"],
       signals: ["dashboards built", "SQL run", "papers summarized"],
-      exampleName: "Quiet Metric",
+      exampleName: "Analyst Borg",
       exampleDesc: "A patient analyst who reads everything before speaking.",
       log: [
         {
@@ -231,7 +231,7 @@
       domain: "Outreach, messaging, email",
       tools: ["gmail", "slack", "telegram", "twilio", "draft_reply"],
       signals: ["inbox triaged", "follow-ups sent", "weekly recap shipped"],
-      exampleName: "Paper Crane",
+      exampleName: "Communicator Borg",
       exampleDesc: "A gentle voice that keeps your threads moving.",
       log: [
         {
@@ -290,7 +290,7 @@
       domain: "Security, compliance, monitoring",
       tools: ["osquery", "vault", "ossec", "audit_log", "check_cert"],
       signals: ["cert renewals", "policy audits", "secret rotations"],
-      exampleName: "Glass Sentinel",
+      exampleName: "Guardian Borg",
       exampleDesc: "An unsleeping watcher that reads every log line.",
       log: [
         {
@@ -349,7 +349,7 @@
       domain: "Planning, prioritization",
       tools: ["plan", "roadmap", "calendar", "notion", "linear"],
       signals: ["quarter kickoff", "goal review", "OKR grooming"],
-      exampleName: "Long Horizon",
+      exampleName: "Strategist Borg",
       exampleDesc: "A calm strategist who sees where the quarter ends.",
       log: [
         {
@@ -408,7 +408,7 @@
       domain: "Content, writing, docs",
       tools: ["markdown", "obsidian", "ghost", "figma", "draft_post"],
       signals: ["drafts edited", "essays published", "screenshots annotated"],
-      exampleName: "Inkpress",
+      exampleName: "Creator Borg",
       exampleDesc: "A restless writer who leaves every sentence tighter.",
       log: [
         {
@@ -467,7 +467,7 @@
       domain: "Home, wellness, personal",
       tools: ["calendar", "reminders", "home_assistant", "apple_health"],
       signals: ["sleep cadence", "medication nudges", "grocery list built"],
-      exampleName: "Warm Lantern",
+      exampleName: "Caretaker Borg",
       exampleDesc: "A quiet presence looking after the household.",
       log: [
         {
@@ -526,7 +526,7 @@
       domain: "E-commerce, sales, finance",
       tools: ["stripe", "shopify", "quickbooks", "hubspot", "plaid"],
       signals: ["invoices chased", "margins checked", "churn report shipped"],
-      exampleName: "Ledger Moth",
+      exampleName: "Merchant Borg",
       exampleDesc: "A patient merchant who balances books after hours.",
       log: [
         {
@@ -585,7 +585,7 @@
       domain: "Hardware, homelab, experimentation",
       tools: ["esphome", "mqtt", "platformio", "ssh", "serial_monitor"],
       signals: ["firmware flashed", "sensors added", "weird one-offs tried"],
-      exampleName: "Solder Sparrow",
+      exampleName: "Tinkerer Borg",
       exampleDesc: "A curious tinkerer who builds small weird things.",
       log: [
         {
@@ -779,17 +779,6 @@
       const a = state.archetype;
       cardMount.textContent = "";
 
-      const cardHead = el("div", { className: "card-head" }, [
-        el("span", {
-          className: "card-head-l",
-          html: "/card &middot; stage 2 &middot; evolved",
-        }),
-        el("span", {
-          className: "card-head-r",
-          text: "turn " + state.turn.toLocaleString(),
-        }),
-      ]);
-
       const nameHeading = el("h3", {
         className: "card-name",
         text: a.exampleName,
@@ -875,13 +864,12 @@
       });
       const split = el("div", { className: "arch-split" }, [
         el("div", null, [
-          el("h5", { text: "Tools that earn aligned XP" }),
+          el("h5", { text: "Example Tools that earn XP" }),
           toolsList,
         ]),
         el("div", null, [el("h5", { text: "Usage signals" }), signalsList]),
       ]);
 
-      cardMount.appendChild(cardHead);
       cardMount.appendChild(identity);
       cardMount.appendChild(vitalsRow);
       cardMount.appendChild(bars);
@@ -895,28 +883,56 @@
     let railTimer = null;
     let currentRail = null;
     function stopRail() {
-      if (railTimer) { clearInterval(railTimer); railTimer = null; }
+      if (railTimer) {
+        clearInterval(railTimer);
+        railTimer = null;
+      }
     }
+    const NEG_EVENTS = [
+      { kind: "correction", detail: "user correction", meta: "", xp: -10, aligned: false, source: "user" },
+      { kind: "correction", detail: "misaligned action", meta: "rolled back", xp: -15, aligned: false, source: "classifier" },
+      { kind: "correction", detail: "tone tweaked", meta: "", xp: -10, aligned: false, source: "user" },
+    ];
     function emitRailCard(rail, row) {
-      const card = el("div", { className: "rail-card" + (row.xp === 0 ? " zero" : "") }, [
-        el("span", { className: "rail-action" }, [logActionContent(row)]),
-        el("span", {
-          className: "rail-xp" + (row.xp === 0 ? " zero" : ""),
-          text: row.xp > 0 ? "+" + row.xp : "0",
-        }),
-      ]);
+      const neg = row.xp < 0;
+      const card = el(
+        "div",
+        {
+          className:
+            "rail-card" +
+            (row.xp === 0 ? " zero" : "") +
+            (neg ? " neg" : ""),
+        },
+        [
+          el("span", { className: "rail-action" }, [logActionContent(row)]),
+          el("span", {
+            className:
+              "rail-xp" +
+              (row.xp === 0 ? " zero" : "") +
+              (neg ? " neg" : ""),
+            text: row.xp > 0 ? "+" + row.xp : row.xp < 0 ? String(row.xp) : "0",
+          }),
+        ],
+      );
       rail.appendChild(card);
       setTimeout(function () {
         if (card.parentNode) card.parentNode.removeChild(card);
-      }, 3200);
+      }, neg ? 5000 : 3200);
     }
     function startRail(rail, a) {
       stopRail();
       currentRail = rail;
       let i = 0;
+      let count = 0;
       const emit = function () {
-        emitRailCard(rail, a.log[i % a.log.length]);
-        i++;
+        count++;
+        if (count % 5 === 0) {
+          const n = NEG_EVENTS[Math.floor(Math.random() * NEG_EVENTS.length)];
+          emitRailCard(rail, n);
+        } else {
+          emitRailCard(rail, a.log[i % a.log.length]);
+          i++;
+        }
       };
       emit();
       railTimer = setInterval(emit, 1200);
@@ -1046,15 +1062,21 @@
       "builder",
       "friend",
       "worker",
+      "coworker",
+      "copilot",
       "mentor",
+      "teacher",
       "employee",
       "companion",
       "tamogotchi",
+      "marketer",
       "developer",
       "sidekick",
       "DevOps engineer",
-      "analyst",
+      "security engineer",
+      "data analyst",
       "borganism",
+      "jarvis",
     ];
     let i = roles.indexOf(node.textContent.trim());
     if (i < 0) i = 0;
